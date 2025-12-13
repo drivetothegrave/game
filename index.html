@@ -17,9 +17,9 @@ body {
 }
 
 .app {
-  width: 520px;
+  width: 600px;
   max-width: 100%;
-  height: 100vh;
+  height: 600px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -273,7 +273,7 @@ function choose(side) {
 }
 
 // ===== CARD MOVEMENT =====
-function hover(side) { const angle=side==="left"?-10:10; cardEl.style.transform=`translateX(${angle*4}px) rotate(${angle}deg)`; preview(side); }
+function hover(side) { const angle=side==="left"?-3:3; cardEl.style.transform=`translateX(${angle*4}px) rotate(${angle}deg)`; preview(side); }
 function resetCard() { cardEl.style.transform="translateX(0) rotate(0)"; clearPreview(); }
 
 // ===== DRAG =====
