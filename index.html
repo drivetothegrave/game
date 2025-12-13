@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Business Reigns — Demo</title>
+<title>Business Reigns</title>
 <style>
 body {
   margin: 0;
@@ -17,8 +17,8 @@ body {
 }
 
 .app {
-  width: 360px; /* фиксированная ширина для десктопа */
-  max-width: 100%; /* адаптив для мобильного */
+  width: 520px;
+  max-width: 100%;
   height: 720px;
   display: flex;
   flex-direction: column;
@@ -30,7 +30,7 @@ body {
 .header {
   text-align: center;
   color: #ccc;
-  font-size: 14px;
+  font-size: 24px;
 }
 
 .stats { display: flex; flex-direction: column; gap: 6px; }
@@ -69,9 +69,9 @@ body {
 .choices { display: flex; gap: 8px; margin-top: 10px; }
 .choice {
   flex: 1;
-  background: #fff;
-  color: #111;
-  font-size: 14px;
+  background: #191919;
+  color: #fff;
+  font-size: 16px;
   font-weight: bold;
   border-radius: 12px;
   display: flex;
@@ -86,16 +86,33 @@ body {
 .share { background: #3498db; color: white; }
 .retry { background: #2ecc71; color: white; }
 
+/* ===== HORIZONTAL CLASS SELECT ===== */
+.class-select {
+  display: flex;
+  justify-content: space-around;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 10px 0;
+}
+
 .class-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   background: #fff;
   color: #111;
   padding: 16px;
   border-radius: 16px;
-  text-align: center;
-  font-size: 16px;
-  margin-bottom: 12px;
   cursor: pointer;
+  min-width: 120px;
+  flex: 1;
+  text-align: center;
 }
+
+.class-card .icon { font-size: 36px; margin-bottom: 8px; }
+.class-card .label { font-size: 16px; font-weight: bold; margin-bottom: 6px; }
+.class-card .description { font-size: 12px; color: #333; margin-bottom: 6px; }
+.class-card .stats { font-size: 12px; color: #555; }
 
 /* ===== MEDIA QUERIES ===== */
 @media screen and (max-width: 480px) {
@@ -103,8 +120,9 @@ body {
   .card { height: 50%; font-size: 5vw; }
   .header { font-size: 4vw; }
   .stat { font-size: 3.5vw; }
-  .choice { font-size: 4vw; }
-  .class-card { font-size: 4.5vw; padding: 12px; }
+  .choice { font-size: 4vw; height:50px; }
+  .class-card { font-size: 4.5vw; padding: 12px; min-width: 90px; }
+  .class-card .icon { font-size: 24px; }
 }
 </style>
 </head>
@@ -113,9 +131,24 @@ body {
 <script>
 // ===== CLASSES =====
 const classes = {
-  startup: { title:"🚀 Стартап", stats:{cash:40,people:70,image:30,chaos:60} },
-  seller: { title:"🛒 Селлер", stats:{cash:60,people:30,image:40,chaos:50} },
-  restaurant: { title:"🍽 Ресторан", stats:{cash:50,people:60,image:50,chaos:40} }
+  startup: { 
+    icon: "🚀", 
+    label: "IT Стартап", 
+    description: "Инновации, быстрый рост, но нестабильность", 
+    stats:{cash:40,people:70,image:30,chaos:60} 
+  },
+  seller: { 
+    icon: "🛒", 
+    label: "Маркетплейс", 
+    description: "Надежный доход, средняя команда, умеренный рост", 
+     stats:{cash:60,people:30,image:40,chaos:50} 
+  },
+  restaurant: { 
+    icon: "🍽", 
+    label: "Ресторан", 
+    description: "Команда важна, стабильность, высокие расходы", 
+    stats:{cash:50,people:60,image:50,chaos:40} 
+  }
 };
 
 // ===== CARDS =====
@@ -123,10 +156,29 @@ const cards = [
   { text:"Дать сотрудникам бонус?", left:{ e:{cash:-10,people:+5}, r:"Сэкономили, команда недовольна." }, right:{ e:{cash:-20,people:+15}, r:"Команда довольна, деньги потрачены." }},
   { text:"Клиент жалуется публично. Ответить?", left:{ e:{image:-10}, r:"Репутация пострадала." }, right:{ e:{image:+10,chaos:+5}, r:"Конфликт улажен, но вы отвлеклись." }},
   { text:"Разрешить удалёнку?", left:{ e:{people:-10}, r:"Команда недовольна." }, right:{ e:{people:+10,chaos:+5}, r:"Гибкость выросла, контроль ослаб." }},
-  { text:"Сэкономить на качестве?", left:{ e:{image:+5}, r:"Клиенты довольны стабильностью." }, right:{ e:{cash:+10,image:-15}, r:"Деньги есть, доверие упало." }}
+  { text:"Сэкономить на качестве?", left:{ e:{image:+5}, r:"Клиенты довольны стабильностью." }, right:{ e:{cash:+10,image:-15}, r:"Деньги есть, доверие упало." }},
+
+  { text:"Запустить рекламную кампанию?", left:{ e:{cash:-15,image:+10}, r:"Деньги потрачены, охват вырос." }, right:{ e:{cash:-5,image:+5}, r:"Небольшой эффект на репутацию." }},
+  { text:"Уволить слабого сотрудника?", left:{ e:{people:-10}, r:"Команда расстроена." }, right:{ e:{people:+5,chaos:+10}, r:"Команду встряхнуло, контроль потерян." }},
+  { text:"Заключить крупный контракт?", left:{ e:{cash:+20,chaos:+5}, r:"Деньги пришли, но нагрузка выросла." }, right:{ e:{cash:+10,image:+5}, r:"Контракт маленький, эффект умеренный." }},
+  { text:"Игнорировать негатив в соцсетях?", left:{ e:{image:-15}, r:"Репутация упала." }, right:{ e:{chaos:-5}, r:"Негатив отступил, но влияние минимальное." }},
+  { text:"Провести корпоратив?", left:{ e:{cash:-10,people:+10}, r:"Команда довольна, деньги потрачены." }, right:{ e:{cash:-5,people:+5}, r:"Мероприятие прошло скромно, эффект небольшой." }},
+  { text:"Внедрить новую технологию?", left:{ e:{cash:-15,image:+10,chaos:+5}, r:"Инвестиции дорогие, но имидж поднялся." }, right:{ e:{cash:-5,image:+2}, r:"Маленькая модернизация." }},
+  { text:"Принять крупного инвестора?", left:{ e:{cash:+30,chaos:+15}, r:"Деньги пришли, но контроль ослаб." }, right:{ e:{cash:+10}, r:"Маленький инвестор, эффект умеренный." }},
+  { text:"Устроить распродажу?", left:{ e:{cash:+5,image:-5}, r:"Продажи выросли, прибыль упала." }, right:{ e:{cash:+10}, r:"Прибыль чуть увеличилась." }},
+  { text:"Игнорировать жалобы сотрудников?", left:{ e:{people:-15,chaos:+10}, r:"Команда демотивирована." }, right:{ e:{people:-5}, r:"Слабый эффект на мораль." }},
+  { text:"Нанять звезду рынка?", left:{ e:{cash:-20,people:+10,image:+15}, r:"Деньги потрачены, эффект сильный." }, right:{ e:{cash:-10,image:+5}, r:"Эффект умеренный." }},
+  { text:"Сделать подарок ключевому клиенту?", left:{ e:{cash:-10,image:+10}, r:"Репутация улучшена, деньги потрачены." }, right:{ e:{cash:-5}, r:"Эффект небольшой." }},
+  { text:"Провести обучение команды?", left:{ e:{cash:-15,people:+15}, r:"Команда прокачана, деньги потрачены." }, right:{ e:{people:+5}, r:"Небольшой эффект на навыки." }},
+  { text:"Закрыть убыточный проект?", left:{ e:{cash:+10,chaos:+5}, r:"Деньги сэкономлены, контроль потерян." }, right:{ e:{cash:+5}, r:"Эффект умеренный." }},
+  { text:"Сделать PR-шум?", left:{ e:{cash:-10,image:+15}, r:"Репутация выросла, расходы большие." }, right:{ e:{image:+5}, r:"Малый эффект на имидж." }},
+  { text:"Изменить правила работы?", left:{ e:{people:-5,chaos:+10}, r:"Команда недовольна, хаос вырос." }, right:{ e:{people:+5,chaos:-5}, r:"Некоторое улучшение." }},
+  { text:"Внедрить автоматизацию процессов?", left:{ e:{cash:-15,chaos:-10}, r:"Деньги потрачены, хаос уменьшился." }, right:{ e:{cash:-5,chaos:-2}, r:"Малый эффект на процессы." }}
+
 ];
 
 let stats, days=1, currentCard, cardEl;
+let deck = [];
 
 // ===== RENDER =====
 const app = document.getElementById("app");
@@ -134,10 +186,19 @@ const app = document.getElementById("app");
 function renderClassSelect() {
   app.innerHTML = `
     <div>
-      <div style="text-align:center;font-size:18px;margin-bottom:8px;">Выберите бизнес</div>
-      ${Object.keys(classes).map(k=>`
-        <div class="class-card" onclick="startGame('${k}')">${classes[k].title}</div>
-      `).join("")}
+      <div style="text-align:center; font-size:24px; margin-bottom:16px;">
+        Выберите класс
+      </div>
+      <div class="class-select">
+        ${Object.keys(classes).map(k=>`
+          <div class="class-card" onclick="startGame('${k}')">
+            <div class="icon">${classes[k].icon}</div>
+            <div class="label">${classes[k].label}</div>
+            <div class="description">${classes[k].description}</div>
+
+          </div>
+        `).join('')}
+      </div>
     </div>
   `;
 }
@@ -173,9 +234,28 @@ function stat(label,key) {
 }
 
 // ===== GAME LOGIC =====
-function startGame(cls) { stats={...classes[cls].stats}; days=1; nextCard(); }
-function nextCard() { currentCard=cards[Math.floor(Math.random()*cards.length)]; clearPreview(); renderGame(); }
-function choose(side) { const eff=currentCard[side].e; for(let k in eff) stats[k]=Math.max(0,Math.min(100,stats[k]+eff[k])); days++; setTimeout(()=>{ if(Object.values(stats).some(v=>v<=0)) gameOver(); else nextCard(); },300); }
+function startGame(cls) {
+  stats = {...classes[cls].stats};
+  days = 1;
+  deck = [...cards];
+  nextCard();
+}
+
+function nextCard() {
+  if(deck.length===0){ deck=[...cards]; }
+  const idx = Math.floor(Math.random()*deck.length);
+  currentCard = deck[idx];
+  deck.splice(idx,1);
+  clearPreview();
+  renderGame();
+}
+
+function choose(side) {
+  const eff=currentCard[side].e;
+  for(let k in eff) stats[k]=Math.max(0,Math.min(100,stats[k]+eff[k]));
+  days++;
+  setTimeout(()=>{ if(Object.values(stats).some(v=>v<=0)) gameOver(); else nextCard(); },300);
+}
 
 // ===== CARD MOVEMENT =====
 function hover(side) { const angle=side==="left"?-10:10; cardEl.style.transform=`translateX(${angle*4}px) rotate(${angle}deg)`; preview(side); }
