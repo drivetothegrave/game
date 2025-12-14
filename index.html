@@ -44,10 +44,10 @@ body {
   overflow: hidden;
   position: relative;
 }
-.fill { height: 100%; background: #aaa; }
+.fill { height: 100%; background: #fff; }
 .preview { position: absolute; top: 0; right: 0; height: 100%; opacity: 0.8; }
-.plus { background: #27ae60; }
-.minus { background: #c0392b; }
+.plus { background: #835DE1; }
+.minus { background: #835DE1; }
 
 .card-wrapper { flex: 1; display: flex; align-items: center; justify-content: center; margin: 8px 0; }
 .card {
@@ -84,8 +84,31 @@ body {
 
 .gameover { text-align: center; display: flex; flex-direction: column; justify-content: center; height: 100%; gap: 16px; }
 .gameover button { padding: 10px; border-radius: 10px; border: none; cursor: pointer; font-size: 14px; }
-.share { background: #3498db; color: white; }
-.retry { background: #2ecc71; color: white; }
+.share { background: #333; color: white; }
+.retry { background: #333; color: white; }
+
+.gameover h1 {
+  font-size: 32px;    
+}
+
+.gameover p {
+  margin: 0 0 64px 0; 
+  font-size: 24px;       /* размер текста, можно поменять */
+  color: #8b8b8b;     
+}
+
+.gameover .buttons {
+  display: flex;
+  gap: 8px;            /* расстояние между кнопками */
+  margin-top: 16px;    /* отступ от текста */
+}
+
+.gameover .buttons button {
+  flex: 1;             /* равная ширина */
+  height: 60px;        /* та же высота, что у кнопок ДА/НЕТ */
+  font-size: 16px;     /* аналогично */
+}
+
 
 /* ===== HORIZONTAL CLASS SELECT ===== */
 .class-select {
@@ -187,9 +210,36 @@ const cards = [
 ];
 
 
-
-
-
+const gameOverReasons = {
+  cash: [
+    "Деньги закончились раньше, чем оптимизм",
+    "Бухгалтер молча закрыл ноутбук и ушёл",
+    "Последний счёт оказался фатальным",
+    "Инвесторы перестали брать трубку",
+    "Касса пуста, а надежды ещё пустее"
+  ],
+  people: [
+    "Команда разошлась, прихватив офисные стулья",
+    "Сотрудники ушли делать стартап без вас",
+    "HR написал «удачи» и удалил чат",
+    "В офисе остался только кулер",
+    "Люди закончились раньше идей"
+  ],
+  image: [
+    "Репутация испарилась после одного твита",
+    "Бренд стал мемом, но не тем",
+    "Клиенты вас помнят — и это плохо",
+    "PR-отдел сдался первым",
+    "Название компании теперь пример в учебниках «как не надо»"
+  ],
+  chaos: [
+    "Процессы вышли из-под контроля и больше не вернулись",
+    "Никто не знал, кто за что отвечает",
+    "Совещания шли, работа — нет",
+    "Документы потерялись вместе с ответственностью",
+    "Хаос победил. Всегда побеждает"
+  ]
+};
 
 
 let stats, days=1, currentCard, cardEl;
@@ -239,10 +289,10 @@ function renderGame() {
   enableDrag();
 }
 
-function stat(label,key) {
+function stat(label, key) {
   return `
     <div class="stat">
-      <div class="stat-label"><span>${label}</span><span>${stats[key]}%</span></div>
+      <div class="stat-label"><span>${label}</span></div>
       <div class="bar" id="bar-${key}"><div class="fill" style="width:${stats[key]}%"></div></div>
     </div>
   `;
@@ -272,6 +322,12 @@ function choose(side) {
   setTimeout(()=>{ if(Object.values(stats).some(v=>v<=0)) gameOver(); else nextCard(); },300);
 }
 
+function getGameOverReason() {
+  const failedStat = Object.keys(stats).find(k => stats[k] <= 0);
+  const reasons = gameOverReasons[failedStat];
+  return reasons[Math.floor(Math.random() * reasons.length)];
+}
+
 // ===== CARD MOVEMENT =====
 function hover(side) { const angle=side==="left"?-3:3; cardEl.style.transform=`translateX(${angle*4}px) rotate(${angle}deg)`; preview(side); }
 function resetCard() { cardEl.style.transform="translateX(0) rotate(0)"; clearPreview(); }
@@ -289,13 +345,17 @@ function preview(side){ clearPreview(); const eff=currentCard[side].e; for(let k
 function clearPreview(){ document.querySelectorAll(".preview").forEach(p=>p.remove()); }
 
 // ===== GAME OVER =====
-function gameOver() {
-  app.innerHTML=`<div class="gameover">
-      <h1>Бизнес закрылся</h1>
-      <p>Вы продержались <b>${days}</b> дней</p>
+function gameOver(){
+  const reason = getGameOverReason();
+  app.innerHTML=`
+    <div class="gameover">
+      <h1>Вы продержались ${days} дней</h1>
+      <p><i>${reason}</i></p>
+        <div class="buttons">
       <button class="share" onclick="share()">Поделиться</button>
       <button class="retry" onclick="location.reload()">Начать заново</button>
-  </div>`;
+     </div>
+    </div>`;
 }
 function share(){ const text=`Я продержался ${days} дней в Business Reigns. А ты?`; if(navigator.share) navigator.share({text}); else alert(text); }
 
